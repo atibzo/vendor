@@ -1,0 +1,1 @@
+export default function TripItineraries(){ return <div className='text-zinc-400'>Itineraries (placeholder)</div> }
