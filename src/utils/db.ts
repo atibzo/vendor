@@ -1,0 +1,6 @@
+import { DEMO_VENDORS_SEED, Vendor } from './data'
+const KEY = 'zo.vendors.v1'
+function loadStore(): Vendor[] { const raw = localStorage.getItem(KEY); if(raw){ try { return JSON.parse(raw) as Vendor[] } catch {} } localStorage.setItem(KEY, JSON.stringify(DEMO_VENDORS_SEED)); return [...DEMO_VENDORS_SEED] }
+export function getVendors(): Vendor[] { return loadStore() }
+export function addVendor(v: Omit<Vendor,'id'>): Vendor { const all = loadStore(); const id = 'v_' + Math.random().toString(36).slice(2); const vendor: Vendor = { id, ...v }; all.unshift(vendor); localStorage.setItem(KEY, JSON.stringify(all)); return vendor }
+export function findVendorDuplicates(name?:string, areasCsv?:string, phone?:string): Vendor[] { const all = loadStore(); const norm=(s?:string)=>(s||'').toLowerCase().replace(/\s+/g,' ').trim(); const n=norm(name); const areas=(areasCsv||'').split(',').map(a=>norm(a)).filter(Boolean); const p=(phone||'').replace(/\s+/g,''); return all.filter(v=>{ const nameMatch = n && norm(v.name).includes(n); const areaOverlap = areas.length ? v.areas.map(a=>norm(a)).some(a=>areas.includes(a)) : false; const phoneMatch = p && (v.primary.phone||'').replace(/\s+/g,'')===p; return (nameMatch&&areaOverlap) || phoneMatch }) }

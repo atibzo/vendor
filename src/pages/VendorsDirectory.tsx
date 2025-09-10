@@ -1,0 +1,11 @@
+import { Link, useSearchParams } from 'react-router-dom'
+import { getVendors } from '../utils/db'
+import { useState } from 'react'
+import VendorDrawer from '../components/VendorDrawer'
+export default function VendorsDirectory(){
+  const [open, setOpen] = useState(false); const vendors = getVendors(); const [params]=useSearchParams(); const batch=params.get('batch')
+  return (<div><div className='mb-3 flex items-center justify-between'><div className='flex items-center gap-2'><h2 className='text-lg font-semibold'>Directory</h2></div><div className='flex gap-2'><button className='rounded-xl px-3 py-2 text-zinc-300 hover:bg-zinc-900/60'>Export CSV</button><button className='rounded-xl bg-lime-400 text-zinc-900 font-semibold px-3 py-2 hover:bg-lime-300' onClick={()=>setOpen(true)}>Add Vendor</button></div></div>
+    <div className='overflow-hidden rounded-2xl border border-zinc-800'><table className='w-full text-sm'><thead className='bg-zinc-900/60 text-zinc-400 uppercase'><tr><th className='px-4 py-3 text-left'>Name</th><th className='px-4 py-3 text-left'>Type</th><th className='px-4 py-3 text-left'>Areas</th><th className='px-4 py-3 text-left'>Docs</th><th className='px-4 py-3 text-left'>★</th><th className='px-4 py-3 text-left'>Flags</th><th className='px-4 py-3 text-right'>Actions</th></tr></thead>
+      <tbody className='divide-y divide-zinc-800'>{vendors.map(v => (<tr key={v.id} className='hover:bg-zinc-900/50'><td className='px-4 py-3 font-medium'>{v.name}</td><td className='px-4 py-3'>{v.type}</td><td className='px-4 py-3'>{v.areas.join(', ')}</td><td className='px-4 py-3'>{v.docs?.[0]?.status || 'Unknown'}</td><td className='px-4 py-3'>{v.rating || '—'}</td><td className='px-4 py-3'>{v.flags?.preferred ? 'Preferred' : ''}</td><td className='px-4 py-3 text-right space-x-2'><Link to={`/admin/vendors/${v.id}`} className='rounded-xl border border-zinc-700 px-3 py-2 inline-block'>Open</Link><Link to={`/admin/trips/t1/vendors?batch=${batch||'b1'}&selectVendor=${v.id}`} className='rounded-xl border border-zinc-700 px-3 py-2 inline-block'>Assign to Group</Link></td></tr>))}</tbody></table></div>
+    <VendorDrawer open={open} onClose={()=>setOpen(false)} /></div>)
+}
