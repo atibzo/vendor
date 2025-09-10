@@ -1,1 +1,0 @@
-export default function TripInfo(){ return <div className='text-zinc-400'>Trip Info (placeholder)</div> }
